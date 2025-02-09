@@ -48,14 +48,4 @@ public class ShoppingCartRestController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/order")
-    public ResponseEntity<ShoppingCart> order(HttpServletRequest req) {
-        String username = req.getRemoteUser();
-        return this.shoppingCartService.order(username)
-                .map((shoppingCart) -> ResponseEntity.ok().body(shoppingCart))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-
-
 }

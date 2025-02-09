@@ -1,9 +1,12 @@
 import React, {use, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import EcomService from "../../repository/ecommercAppRepo";
+import { useError } from "../Errors/errorContext";
 
 const Register= (props) => {
 
     const navigate = useNavigate();
+    const { setError } = useError();
     const [user, setUser] = React.useState({
         username: "",
         password: "",
@@ -24,14 +27,24 @@ const Register= (props) => {
 
     const formSubmited = (e) => {
         e.preventDefault();
-        const username = user.name;
+        const username = user.username;
         const password = user.password;
         const repeatPassword = user.repeatPassword;
         const name = user.name;
         const surname = user.surname;
 
-        props.reg(username, password, repeatPassword, name, surname);
-        navigate("/products");
+        EcomService.registerUser(username, password, repeatPassword, name, surname)
+            .then(() => {
+                this.loadProducts()
+                setError(null);
+                navigate("/products");
+            }).catch ((error) => {
+            if (error.response) {
+                setError(error.response.data.error);
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
 
     return (

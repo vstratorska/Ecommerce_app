@@ -46,7 +46,6 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public void deleteManufacturer(Long id) {
-        this.manufacturerRepository.findById(id).orElseThrow(() -> new ManufacturerNotFoundException(id));
         this.manufacturerRepository.deleteById(id);
     }
 }

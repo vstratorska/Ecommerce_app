@@ -51,8 +51,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = this.findByUser(username);
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        if(shoppingCart.getProducts().contains(product))
-            throw new ProductAlreadyInShoppingCartException(productId, username);
         shoppingCart.getProducts().add(product);
         return Optional.of(this.shoppingCartRepository.save(shoppingCart));
     }
@@ -62,16 +60,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = this.findByUser(username);
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        if(!shoppingCart.getProducts().contains(product))
-            throw new ProductIsNotInShoppingCartException(productId);
         shoppingCart.getProducts().remove(product);
         return Optional.of(this.shoppingCartRepository.save(shoppingCart));
     }
 
-    @Override
-    public Optional<ShoppingCart> order(String username) {
-        ShoppingCart shoppingCart = this.findByUser(username);
-        shoppingCart.getProducts().clear();
-        return Optional.of(this.shoppingCartRepository.save(shoppingCart));
-    }
+
 }

@@ -16,9 +16,12 @@ import ShoppingCart from "../ShoppingCart/ShoppingCart";
 import Login from "../Authentication/login";
 import ProtectedRoute from "../Authentication/ProtectedRoute";
 import {AuthProvider} from "../Authentication/AuthContext";
-
+import Orders from "../Orders/OrdersList/orders";
+import OrderTerm from "../Orders/OrderTerm/orderTerm";
+import { ErrorContext } from "../Errors/errorContext"; // Import ErrorContext
 class App extends Component {
 
+    static contextType = ErrorContext;
 
     constructor(props) {
         super(props);
@@ -28,7 +31,9 @@ class App extends Component {
             categories: [],
             selectedProduct: {},
             selectedManufacturer: {},
-            productsForCart: []
+            productsForCart: [],
+            orders: [],
+            selectedOrder: {}
         }
     }
 
@@ -37,20 +42,22 @@ class App extends Component {
             <AuthProvider>
             <Router className="container-fluid">
                 <main>
-                    <Header/>
+                    <Header makeOrder={this.loadOrders} getOrders={this.loadOrdersForUser}/>
                     <div >
                         <Routes >
                             <Route path={"/home"} element={<Home/>}/>
                             <Route path={"/"} element={<Home/>}/>
                             <Route path={"/login"} element={<Login onLoginSuccess={this.onLoginSuccess} />}/>
-                            <Route path={"/register"} element={<Register reg={this.register}/>}/>
+                            <Route path={"/register"} element={<Register/>}/>
                             <Route path={"/manufacturers"} element={<ProtectedRoute><Manufacturers manufacturers = {this.state.manufacturers} getManufacturer={this.getManufacturer} onDelete={this.deleteManufacturer}/></ProtectedRoute>}/>
                             <Route path={"/manufacturers/add"} element={<ProtectedRoute><ManufacturerAdd onAdd={this.addManufacturer}/></ProtectedRoute>}/>
                             <Route path={"/manufacturers/edit/:id"} element={<ProtectedRoute><ManufacturerEdit onEdit={this.editManufacturer} manufacturer={this.state.selectedManufacturer}/></ProtectedRoute>}/>
-                            <Route path={"/products/add"} element={<ProtectedRoute><ProductAdd manufacturers = {this.state.manufacturers} onAdd={this.addProduct}/></ProtectedRoute>}/>
-                            <Route path={"/products/edit/:id"} element={<ProtectedRoute><ProductEdit manufacturers = {this.state.manufacturers} onEdit={this.editProduct} product={this.state.selectedProduct}/></ProtectedRoute>}/>
+                            <Route path={"/products/add"} element={<ProtectedRoute><ProductAdd manufacturers = {this.state.manufacturers} categories={this.state.categories} loadProducts={this.loadProducts} /></ProtectedRoute>}/>
+                            <Route path={"/products/edit/:id"} element={<ProtectedRoute><ProductEdit manufacturers = {this.state.manufacturers} categories={this.state.categories}  product={this.state.selectedProduct} loadProducts={this.loadProducts}/></ProtectedRoute>}/>
                             <Route path={"/products"} element={<Products products = {this.state.products} getProduct={this.getProduct} onDelete={this.deleteProduct}  addProduct={this.addProductToCart}/>}/>
                             <Route path={"/shoppingCart"} element={<ProtectedRoute><ShoppingCart products = {this.state.productsForCart} getProduct={this.getProduct} deleteProduct={this.deleteProductFromCart} order={this.orderProducts} /></ProtectedRoute>}/>
+                            <Route path={"/orders"} element={<ProtectedRoute><Orders  orders={this.state.orders} selected={this.selectOrder} /></ProtectedRoute>}/>
+                            <Route path={"/singleOrder"} element={<ProtectedRoute><OrderTerm order={this.state.selectedOrder} /></ProtectedRoute>}/>
 
                         </Routes>
                     </div>
@@ -68,11 +75,10 @@ class App extends Component {
     {
         this.loadManufacturers();
         this.loadProductsForCart();
+        this.loadCategories();
+
     }
 
-    register = (username, password, repeatPassword, name, surname) => {
-        EcomService.registerUser(username, password, repeatPassword, name, surname).then(() => this.loadProducts())
-    }
 
     loadManufacturers = () => {
         EcomService.fetchManufacturers().then((data) => {
@@ -90,18 +96,54 @@ class App extends Component {
         })
     }
 
-    addProduct = (name, price, description, image, quantity, category, manufacturer) => {
-        EcomService.addProduct(name, price, description, image, quantity, category, manufacturer).then(() => this.loadProducts())
+
+    loadCategories = () => {
+        EcomService.fetchCategories().then((data) => {
+            this.setState({
+                categories: data.data
+            })
+        })
     }
-    editProduct = (id, name, price, description, image, quantity, category, manufacturer) => {
-        EcomService.editProduct(id, name, price, description, image, quantity, category, manufacturer).then(() => this.loadProducts())
+
+    loadOrders = () => {
+        EcomService.fetchOrders().then((data) => {
+            this.setState({
+                orders: data.data
+            })
+        })
     }
+
+    loadOrdersForUser = () => {
+        this.setState({
+            orders: []
+        })
+        EcomService.fetchOrdersForUser()
+            .then((data) => {
+            this.setState({
+                orders: data.data
+            })
+        }).catch ((error) => {
+            console.error("Error fetching orders:", error);
+        });
+    }
+
+
+
     getProduct = (id) => {
+        const { setError } = this.context;
+
         EcomService.getProduct(id).then((data) => {
             this.setState( {
                 selectedProduct: data.data
             })
-        })
+            setError(null)
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error); // Backend error
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
     deleteProduct = (id) => {
         EcomService.deleteProduct(id).then(() => this.loadProducts())
@@ -126,23 +168,72 @@ class App extends Component {
     }
 
     loadProductsForCart = () => {
+        const { setError } = this.context;
+
         EcomService.fetchProductsForShoppingCart().then((data) => {
             this.setState({
                 productsForCart: data.data
             })
-        })
+            setError(null)
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error);
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
 
     addProductToCart = (id) => {
-        EcomService.addProductToCart(id).then(() => this.loadProductsForCart())
+        const { setError } = this.context;
+
+        EcomService.addProductToCart(id).then(() => {
+            this.loadProductsForCart()
+            setError(null);
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error); // Backend error
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
     deleteProductFromCart = (id) => {
-        EcomService.deleteProductFromCart(id).then(() => this.loadProductsForCart())
+        const { setError } = this.context;
+
+        EcomService.deleteProductFromCart(id).then(() => {
+            this.loadProductsForCart()
+            setError(null);
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error); // Backend error
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
     orderProducts = () => {
-        EcomService.order().then(() => this.loadProductsForCart())
+        const { setError } = this.context;
+
+        EcomService.order().then(() => {
+            this.loadProductsForCart()
+            this.loadProducts();
+            alert("Thank you for making an order!")
+            setError(null);
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error);
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
 
+    selectOrder = (id) => {
+        this.setState({
+            selectedOrder: this.state.orders.find(o => o.id === id)
+        })
+    }
 }
 
 export default App;

@@ -46,13 +46,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ManufacturerNotFoundException(productDto.getManufacturerId()));
         try
         {
-            Category.valueOf(productDto.getCategory());
+            Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
         } catch (IllegalArgumentException  e)
         {
             throw new CategoryNotFoundException(productDto.getCategory());
         }
 
-        Category category = Category.valueOf(productDto.getCategory());
+        Category category = Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
+
 
         Product product=new Product(productDto.getName(), productDto.getPrice(), productDto.getDescription(), productDto.getImage(), productDto.getQuantity(), category, manufacturer);
         return Optional.of(this.productRepository.save(product));
@@ -67,13 +68,14 @@ public class ProductServiceImpl implements ProductService {
 
         try
         {
-            Category.valueOf(productDto.getCategory());
+            Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
         } catch (IllegalArgumentException  e)
         {
             throw new CategoryNotFoundException(productDto.getCategory());
         }
 
-        Category category = Category.valueOf(productDto.getCategory());
+        Category category = Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
+
 
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
@@ -87,7 +89,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void delete(Long id) {
-        this.productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
         this.productRepository.deleteById(id);
     }
 }

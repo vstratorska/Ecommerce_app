@@ -4,7 +4,7 @@ import {useAuth} from "../../Authentication/AuthContext";
 import makeCategoryToLower from "../../Category/category";
 import React from "react";
 
-const ProductTermForCart = (props) => {
+const ProductTermForOrder = (props) => {
 
 
     return (
@@ -15,12 +15,8 @@ const ProductTermForCart = (props) => {
             <td><img src={props.term.image} alt={"Image not found"}/></td>
             <td>{props.term.manufacturer.name}</td>
             <td>{makeCategoryToLower({c: props.term.category})}</td>
-            <td className={"btn btn-danger"} onClick={() => {
-                props.deleteProduct(props.term.id)
-            }}>Remove from cart
-            </td>
         </tr>
     )
 }
 
-export default ProductTermForCart;
+export default ProductTermForOrder;

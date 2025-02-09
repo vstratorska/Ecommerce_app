@@ -1,10 +1,10 @@
 import axios from "../custom-axios/axios";
 import noAuth from "../custom-axios/axiosNoAuth";
 
-
 const EcomService = {
+
     fetchManufacturers: () => {
-        return axios.get("/manufacturers", { withCredentials: true });
+        return axios.get("/manufacturers");
     },
 
     fetchProducts: () => {
@@ -13,22 +13,28 @@ const EcomService = {
     fetchProductsForShoppingCart: () => {
         return axios.get("/shopping-cart");
     },
-    // fetchCategories: () => {
-    //     return axios.get("/categories",  { withCredentials: true });
-    // },
+    fetchCategories: () => {
+        return axios.get("/categories");
+    },
+    fetchOrders: () => {
+        return axios.get("/orders");
+    },
+    fetchOrdersForUser: () => {
+        return axios.get("/orders/my-orders");
+    },
     deleteProduct: (id) => {
         return axios.delete(`/products/delete/${id}`);
     },
     addProduct: (name, price, description, image, quantity, category, manufacturer) => {
-        return axios.post("/products/add", {
-            "name" : name,
-            "price" : price,
-            "description" : description,
-            "image" : image,
-            "quantity" : quantity,
-            "category" : category,
-            "manufacturerId" : manufacturer,
-        })
+        return  axios.post("/products/add", {
+                "name" : name,
+                "price" : price,
+                "description" : description,
+                "image" : image,
+                "quantity" : quantity,
+                "category" : category,
+                "manufacturerId" : manufacturer,
+            })
     },
     editProduct: (id, name, price,description, image, quantity, category, manufacturer) => {
         return axios.put(`/products/edit/${id}`, {
@@ -73,7 +79,7 @@ const EcomService = {
         return axios.post(`/shopping-cart/remove/${id}`)
     },
     order: () => {
-        return axios.get("/shopping-cart/order")
+        return axios.get("/orders/create")
     },
 
     registerUser: (username, password, repeatPassword, name, surname) => {

@@ -31,7 +31,6 @@ const ShoppingCart = (props) =>
             <div className="d-grid gap-2">
                 <button className="btn btn-primary" onClick={() => {
                     props.order()
-                    alert("Thank you for making an order!")
                 }}>Order</button>
             </div>
 

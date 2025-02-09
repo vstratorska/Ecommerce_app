@@ -36,6 +36,10 @@ const Header = (props) => {
                             </li>}
                         </ul>
                     </div>
+                    { userRoles.includes("ROLE_ADMIN") &&
+                        <Link onClick={() => props.makeOrder()} className="btn btn-info" to={"/orders"}>View Orders</Link>}
+                    { userRoles.includes("ROLE_USER") &&
+                        <Link onClick={() => props.getOrders()} className="btn btn-info" to={"/orders"}>View Your Orders</Link>}
                     <div>
                         { userRoles.includes("ROLE_USER") &&
                             <Link to={"/shoppingCart"} className="btn btn-warning">My Shopping Cart</Link>}

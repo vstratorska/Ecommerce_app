@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.config;
 
+import com.example.ecommerceapp.exceptions.InvalidUsernameOrPasswordException;
 import com.example.ecommerceapp.service.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,12 +28,13 @@ public class CustomUsernamePasswordAuthenticationProvider implements Authenticat
         String password = authentication.getCredentials().toString();
 
         if ("".equals(username) || "".equals(password)) {
-            throw new BadCredentialsException("Invalid Credentials");
+            throw new InvalidUsernameOrPasswordException();
         }
+
         UserDetails userDetails = this.userService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("Password is incorrect!");
+            throw new InvalidUsernameOrPasswordException();
         }
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
     }

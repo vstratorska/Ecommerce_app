@@ -1,6 +1,7 @@
 package com.example.ecommerceapp.service.impl;
 
 import com.example.ecommerceapp.exceptions.InvalidArgumentsException;
+import com.example.ecommerceapp.exceptions.InvalidUsernameOrPasswordException;
 import com.example.ecommerceapp.exceptions.PasswordsDoNotMatchException;
 import com.example.ecommerceapp.exceptions.UsernameAlreadyExistsException;
 import com.example.ecommerceapp.models.User;
@@ -8,7 +9,6 @@ import com.example.ecommerceapp.models.dto.UserDto;
 import com.example.ecommerceapp.repository.UserRepository;
 import com.example.ecommerceapp.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+    public UserDetails loadUserByUsername(String username)  {
+        return this.userRepository.findByUsername(username).orElseThrow(() -> new InvalidUsernameOrPasswordException());
     }
 }

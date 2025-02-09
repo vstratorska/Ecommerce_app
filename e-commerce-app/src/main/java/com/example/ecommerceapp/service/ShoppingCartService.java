@@ -12,7 +12,7 @@ public interface ShoppingCartService {
     ShoppingCart findByUser(String username);
     Optional<ShoppingCart> addProductToShoppingCart(String username, Long productId);
     Optional<ShoppingCart> removeProductFromShoppingCart(String username, Long productId);
-    Optional<ShoppingCart> order(String username);
+  //  Optional<ShoppingCart> order(String username);
 
 
 }

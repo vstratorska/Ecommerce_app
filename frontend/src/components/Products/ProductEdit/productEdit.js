@@ -1,10 +1,14 @@
 import React from "react";
 import products from "../ProductList/products";
 import {useNavigate} from "react-router-dom";
+import makeCategoryToLower from "../../Category/category";
+import EcomService from "../../../repository/ecommercAppRepo";
+import { useError } from "../../Errors/errorContext";
 
 const ProductEdit = (props) => {
 
     const navigate = useNavigate()
+    const { setError } = useError();
     const [product, setProduct] = React.useState({
         name: "",
         price: 0,
@@ -26,6 +30,7 @@ const ProductEdit = (props) => {
         )
     }
 
+
     const formSubmited = (e) => {
         e.preventDefault();
         const name = product.name !== "" ? product.name : props.product.name;
@@ -36,8 +41,18 @@ const ProductEdit = (props) => {
         const category = product.category !== "" ? product.category : props.product.category;
         const manufacturer = product.manufacturer !== 0 ? product.manufacturer : props.product.manufacturer.id;
 
-        props.onEdit(props.product.id, name, price, description, image, quantity, category, manufacturer);
-        navigate("/products");
+        EcomService.editProduct(props.product.id, name, price, description, image, quantity, category, manufacturer)
+            .then(() => {
+                props.loadProducts()
+                setError(null);
+                navigate("/products");
+            }).catch ((error) => {
+            if (error.response) {
+                setError(error.response.data.error); // Backend error
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
 
     return (
@@ -78,16 +93,22 @@ const ProductEdit = (props) => {
             </div>
             <div className="mb-3">
                 <label className="form-label">Category</label>
-                <input name="category" id="category" type="text" className="form-control" onChange={handleChange}
-                       placeholder={props.product.category}
-                />
+                <select name="category" className="form-select" onChange={handleChange}>
+                    {props.categories.map(c => {
+                        if (props.product.category !== undefined && makeCategoryToLower({ c: props.product.category }) === c)
+                            return <option selected={c}
+                                           value={c}>{c}</option>
+                        else return <option value={c}>{c}</option>
+                    })}
+                </select>
             </div>
             <div className="mb-3">
                 <label className="form-label">Manufacturer</label>
                 <select name="manufacturer" className="form-select" onChange={handleChange}>
                     {props.manufacturers.map(c => {
                         if (props.product.manufacturer !== undefined && props.product.manufacturer.id === c.id)
-                            return <option selected={props.product.manufacturer.id} value={c.id}>{c.manufacturerName}</option>
+                            return <option selected={props.product.manufacturer.id}
+                                           value={c.id}>{c.manufacturerName}</option>
                         else return <option value={c.id}>{c.manufacturerName}</option>
                     })}
                 </select>

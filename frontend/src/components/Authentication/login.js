@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext";
 import {Link, useNavigate} from "react-router-dom";
+import { useError } from "../Errors/errorContext";
 
 const Login = (props) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+    const { setError } = useError();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,13 +18,18 @@ const Login = (props) => {
                 username: username,
                 password: password,
             });
-            login(response.data); // Assuming the backend returns the JWT toke
+            login(response.data);
             props.onLoginSuccess();
-            navigate("/products"); // Redirect to home page after login
+            navigate("/products");
         } catch (error) {
-            console.error("Login failed:", error);
+            if (error.response) {
+                setError(error.response.data.error);
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
         }
     };
+
 
     return (
         <form className="container" style={{marginTop: "30px"}} onSubmit={handleSubmit}>
