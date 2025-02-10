@@ -74,7 +74,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(Exception.class) // Catch any unhandled exceptions
+    @ExceptionHandler(ProductWithNameNotFound.class)
+    public ResponseEntity<Map<String, String>> handleProductWithNameNotFound(ProductWithNameNotFound ex) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }

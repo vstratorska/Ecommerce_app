@@ -3,6 +3,7 @@ package com.example.ecommerceapp.service.impl;
 import com.example.ecommerceapp.exceptions.CategoryNotFoundException;
 import com.example.ecommerceapp.exceptions.ManufacturerNotFoundException;
 import com.example.ecommerceapp.exceptions.ProductNotFoundException;
+import com.example.ecommerceapp.exceptions.ProductWithNameNotFound;
 import com.example.ecommerceapp.models.Manufacturer;
 import com.example.ecommerceapp.models.Product;
 import com.example.ecommerceapp.models.dto.ProductDto;
@@ -44,18 +45,16 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> save(ProductDto productDto) {
         Manufacturer manufacturer = this.manufacturerRepository.findById(productDto.getManufacturerId())
                 .orElseThrow(() -> new ManufacturerNotFoundException(productDto.getManufacturerId()));
-        try
-        {
+        try {
             Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
-        } catch (IllegalArgumentException  e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new CategoryNotFoundException(productDto.getCategory());
         }
 
         Category category = Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
 
 
-        Product product=new Product(productDto.getName(), productDto.getPrice(), productDto.getDescription(), productDto.getImage(), productDto.getQuantity(), category, manufacturer);
+        Product product = new Product(productDto.getName(), productDto.getPrice(), productDto.getDescription(), productDto.getImage(), productDto.getQuantity(), category, manufacturer);
         return Optional.of(this.productRepository.save(product));
     }
 
@@ -66,11 +65,9 @@ public class ProductServiceImpl implements ProductService {
         Manufacturer manufacturer = this.manufacturerRepository.findById(productDto.getManufacturerId())
                 .orElseThrow(() -> new ManufacturerNotFoundException(productDto.getManufacturerId()));
 
-        try
-        {
+        try {
             Category.valueOf(productDto.getCategory().toUpperCase().replace("-", "_"));
-        } catch (IllegalArgumentException  e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new CategoryNotFoundException(productDto.getCategory());
         }
 
@@ -90,5 +87,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long id) {
         this.productRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(String category) {
+        Category c = Category.valueOf(category.toUpperCase().replace("-", "_"));
+        return this.productRepository.findAllByCategory(c);
+    }
+
+    @Override
+    public List<Product> getProductsByName(String name) {
+        List<Product> products = this.productRepository.findAllByNameContainingIgnoreCase(name);
+
+        if (products.isEmpty()) {
+            throw new ProductWithNameNotFound(name);
+        }
+        return products;
     }
 }

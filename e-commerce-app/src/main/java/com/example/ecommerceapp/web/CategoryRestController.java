@@ -22,7 +22,7 @@ public class CategoryRestController {
     }
 
     @GetMapping
-    public List<String> getCategories () {
+    public List<String> getCategories() {
         return this.categoryService.getCategories();
     }
 

@@ -30,7 +30,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public List<Product> listAllProductsInShoppingCart(Long id) {
-        if(!this.shoppingCartRepository.findById(id).isPresent())
+        if (!this.shoppingCartRepository.findById(id).isPresent())
             throw new ShoppingCartNotFoundException(id);
         return this.shoppingCartRepository.findById(id).get().getProducts();
     }

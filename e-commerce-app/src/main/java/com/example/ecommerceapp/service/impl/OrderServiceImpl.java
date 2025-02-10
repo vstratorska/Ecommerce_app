@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
         ShoppingCart shoppingCart = this.shoppingCartRepository.findByUser(user).get();
         List<Product> products = shoppingCart.getProducts();
         products.forEach(p -> {
-            if(p.getQuantity()==0)
+            if (p.getQuantity() == 0)
                 throw new ProductSoldOutException(p.getName());
         });
 

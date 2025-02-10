@@ -1,4 +1,3 @@
-
 import {Link} from "react-router-dom";
 import {useAuth} from "../../Authentication/AuthContext";
 import makeCategoryToLower from "../../Category/category";
@@ -8,14 +7,17 @@ const ProductTermForOrder = (props) => {
 
 
     return (
-        <tr>
-            <td>{props.term.name}</td>
-            <td>{props.term.price}</td>
-            <td>{props.term.description}</td>
-            <td><img src={props.term.image} alt={"Image not found"}/></td>
-            <td>{props.term.manufacturer.name}</td>
-            <td>{makeCategoryToLower({c: props.term.category})}</td>
-        </tr>
+        <div className="card col border-0" style={{width: "18rem"}}>
+            <img src={props.term.image} alt={"Image not found"} className="card-img-top rounded-0"/>
+            <div className="card-body p-2">
+                <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="card-title font-weight-bold mb-1">{props.term.name}</h5>
+                    <p className="card-text font-weight-bold mb-1">{props.term.price} EUR</p>
+                </div>
+                <p className="card-text mb-1">{props.term.description}</p>
+                <p className="card-text mb-2">Manufacturer: {props.term.manufacturer.manufacturerName}</p>
+            </div>
+        </div>
     )
 }
 

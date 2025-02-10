@@ -20,7 +20,7 @@ public class RegisterRestController {
     @PostMapping
     public ResponseEntity<User> register(@RequestBody UserDto userDto) {
         return this.userService.register(userDto)
-                .map(user-> ResponseEntity.ok().body(user))
+                .map(user -> ResponseEntity.ok().body(user))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

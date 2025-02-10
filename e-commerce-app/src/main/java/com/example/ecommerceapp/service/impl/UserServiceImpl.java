@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username)  {
+    public UserDetails loadUserByUsername(String username) {
         return this.userRepository.findByUsername(username).orElseThrow(() -> new InvalidUsernameOrPasswordException());
     }
 }

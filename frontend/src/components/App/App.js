@@ -18,7 +18,7 @@ import ProtectedRoute from "../Authentication/ProtectedRoute";
 import {AuthProvider} from "../Authentication/AuthContext";
 import Orders from "../Orders/OrdersList/orders";
 import OrderTerm from "../Orders/OrderTerm/orderTerm";
-import { ErrorContext } from "../Errors/errorContext"; // Import ErrorContext
+import {ErrorContext} from "../Errors/errorContext"; // Import ErrorContext
 class App extends Component {
 
     static contextType = ErrorContext;
@@ -38,45 +38,70 @@ class App extends Component {
     }
 
     render() {
-        return(
+        return (
             <AuthProvider>
-            <Router className="container-fluid">
-                <main>
-                    <Header makeOrder={this.loadOrders} getOrders={this.loadOrdersForUser}/>
-                    <div >
-                        <Routes >
-                            <Route path={"/home"} element={<Home/>}/>
-                            <Route path={"/"} element={<Home/>}/>
-                            <Route path={"/login"} element={<Login onLoginSuccess={this.onLoginSuccess} />}/>
-                            <Route path={"/register"} element={<Register/>}/>
-                            <Route path={"/manufacturers"} element={<ProtectedRoute><Manufacturers manufacturers = {this.state.manufacturers} getManufacturer={this.getManufacturer} onDelete={this.deleteManufacturer}/></ProtectedRoute>}/>
-                            <Route path={"/manufacturers/add"} element={<ProtectedRoute><ManufacturerAdd onAdd={this.addManufacturer}/></ProtectedRoute>}/>
-                            <Route path={"/manufacturers/edit/:id"} element={<ProtectedRoute><ManufacturerEdit onEdit={this.editManufacturer} manufacturer={this.state.selectedManufacturer}/></ProtectedRoute>}/>
-                            <Route path={"/products/add"} element={<ProtectedRoute><ProductAdd manufacturers = {this.state.manufacturers} categories={this.state.categories} loadProducts={this.loadProducts} /></ProtectedRoute>}/>
-                            <Route path={"/products/edit/:id"} element={<ProtectedRoute><ProductEdit manufacturers = {this.state.manufacturers} categories={this.state.categories}  product={this.state.selectedProduct} loadProducts={this.loadProducts}/></ProtectedRoute>}/>
-                            <Route path={"/products"} element={<Products products = {this.state.products} getProduct={this.getProduct} onDelete={this.deleteProduct}  addProduct={this.addProductToCart}/>}/>
-                            <Route path={"/shoppingCart"} element={<ProtectedRoute><ShoppingCart products = {this.state.productsForCart} getProduct={this.getProduct} deleteProduct={this.deleteProductFromCart} order={this.orderProducts} /></ProtectedRoute>}/>
-                            <Route path={"/orders"} element={<ProtectedRoute><Orders  orders={this.state.orders} selected={this.selectOrder} /></ProtectedRoute>}/>
-                            <Route path={"/singleOrder"} element={<ProtectedRoute><OrderTerm order={this.state.selectedOrder} /></ProtectedRoute>}/>
-
-                        </Routes>
-                    </div>
-                    <Footer/>
-                </main>
-            </Router>
+                <Router className="container-fluid">
+                    <main>
+                        <Header makeOrder={this.loadOrders} getOrders={this.loadOrdersForUser}
+                                categories={this.state.categories} getByCat={this.loadProductsByCategory}
+                                getProducts={this.loadProducts}/>
+                        <div>
+                            <Routes>
+                                <Route path={"/home"} element={<Home search={this.loadProductByName}/>}/>
+                                <Route path={"/"} element={<Home search={this.loadProductByName}/>}/>
+                                <Route path={"/login"} element={<Login onLoginSuccess={this.onLoginSuccess}/>}/>
+                                <Route path={"/register"} element={<Register/>}/>
+                                <Route path={"/manufacturers"}
+                                       element={<Manufacturers manufacturers={this.state.manufacturers}
+                                                               getManufacturer={this.getManufacturer}
+                                                               onDelete={this.deleteManufacturer}/>}/>
+                                <Route path={"/manufacturers/add"} element={<ProtectedRoute><ManufacturerAdd
+                                    onAdd={this.addManufacturer}/></ProtectedRoute>}/>
+                                <Route path={"/manufacturers/edit/:id"}
+                                       element={<ProtectedRoute><ManufacturerEdit onEdit={this.editManufacturer}
+                                                                                  manufacturer={this.state.selectedManufacturer}/></ProtectedRoute>}/>
+                                <Route path={"/products/add"}
+                                       element={<ProtectedRoute><ProductAdd manufacturers={this.state.manufacturers}
+                                                                            categories={this.state.categories}
+                                                                            loadProducts={this.loadProducts}/></ProtectedRoute>}/>
+                                <Route path={"/products/edit/:id"}
+                                       element={<ProtectedRoute><ProductEdit manufacturers={this.state.manufacturers}
+                                                                             categories={this.state.categories}
+                                                                             product={this.state.selectedProduct}
+                                                                             loadProducts={this.loadProducts}/></ProtectedRoute>}/>
+                                <Route path={"/products"}
+                                       element={<Products products={this.state.products} getProduct={this.getProduct}
+                                                          onDelete={this.deleteProduct}
+                                                          addProduct={this.addProductToCart}
+                                                          search={this.loadProductByName}/>}/>
+                                <Route path={"/shoppingCart"}
+                                       element={<ProtectedRoute><ShoppingCart products={this.state.productsForCart}
+                                                                              getProduct={this.getProduct}
+                                                                              deleteProduct={this.deleteProductFromCart}
+                                                                              order={this.orderProducts}/></ProtectedRoute>}/>
+                                <Route path={"/orders"} element={<ProtectedRoute><Orders orders={this.state.orders}
+                                                                                         selected={this.selectOrder}/></ProtectedRoute>}/>
+                                <Route path={"/singleOrder"} element={<ProtectedRoute><OrderTerm
+                                    order={this.state.selectedOrder}/></ProtectedRoute>}/>
+                            </Routes>
+                        </div>
+                        <Footer/>
+                    </main>
+                </Router>
             </AuthProvider>
         )
     }
 
     componentDidMount() {
         this.loadProducts();
-    }
-    onLoginSuccess = () =>
-    {
-        this.loadManufacturers();
-        this.loadProductsForCart();
         this.loadCategories();
+        this.loadManufacturers();
 
+    }
+
+    onLoginSuccess = () => {
+        this.loadProductsForCart();
+        this.loadProducts();
     }
 
 
@@ -94,6 +119,32 @@ class App extends Component {
                 products: data.data
             })
         })
+    }
+
+    loadProductsByCategory = (category) => {
+        EcomService.fetchProductsByCategory(category).then((data) => {
+            this.setState({
+                products: data.data
+            })
+        })
+    }
+
+    loadProductByName = (name) => {
+        const {setError} = this.context;
+        EcomService.fetchProductByName(name).then((data) => {
+            this.setState({
+                products: data.data
+            })
+        }).catch((error) => {
+            if (error.response) {
+                setError(error.response.data.error);
+                this.setState({
+                    products: []
+                })
+            } else {
+                setError("Something went wrong, please try again later.");
+            }
+        });
     }
 
 
@@ -119,27 +170,26 @@ class App extends Component {
         })
         EcomService.fetchOrdersForUser()
             .then((data) => {
-            this.setState({
-                orders: data.data
-            })
-        }).catch ((error) => {
+                this.setState({
+                    orders: data.data
+                })
+            }).catch((error) => {
             console.error("Error fetching orders:", error);
         });
     }
 
 
-
     getProduct = (id) => {
-        const { setError } = this.context;
+        const {setError} = this.context;
 
         EcomService.getProduct(id).then((data) => {
-            this.setState( {
+            this.setState({
                 selectedProduct: data.data
             })
             setError(null)
         }).catch((error) => {
             if (error.response) {
-                setError(error.response.data.error); // Backend error
+                setError(error.response.data.error);
             } else {
                 setError("Something went wrong, please try again later.");
             }
@@ -157,7 +207,7 @@ class App extends Component {
     }
     getManufacturer = (id) => {
         EcomService.getManufacturer(id).then((data) => {
-            this.setState( {
+            this.setState({
                 selectedManufacturer: data.data
             })
         })
@@ -168,7 +218,7 @@ class App extends Component {
     }
 
     loadProductsForCart = () => {
-        const { setError } = this.context;
+        const {setError} = this.context;
 
         EcomService.fetchProductsForShoppingCart().then((data) => {
             this.setState({
@@ -185,7 +235,7 @@ class App extends Component {
     }
 
     addProductToCart = (id) => {
-        const { setError } = this.context;
+        const {setError} = this.context;
 
         EcomService.addProductToCart(id).then(() => {
             this.loadProductsForCart()
@@ -199,7 +249,7 @@ class App extends Component {
         });
     }
     deleteProductFromCart = (id) => {
-        const { setError } = this.context;
+        const {setError} = this.context;
 
         EcomService.deleteProductFromCart(id).then(() => {
             this.loadProductsForCart()
@@ -213,7 +263,7 @@ class App extends Component {
         });
     }
     orderProducts = () => {
-        const { setError } = this.context;
+        const {setError} = this.context;
 
         EcomService.order().then(() => {
             this.loadProductsForCart()

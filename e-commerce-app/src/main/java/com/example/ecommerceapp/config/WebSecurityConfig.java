@@ -63,13 +63,16 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/products").permitAll()
+                        .requestMatchers("/api/manufacturers").permitAll()
+                        .requestMatchers("/api/categories").permitAll()
+                        .requestMatchers("/api/products/category/**").permitAll()
+                        .requestMatchers("/api/products/product/**").permitAll()
                         .requestMatchers("/api/products/**").hasRole("ADMIN")
-                        .requestMatchers("/api/manufacturers").authenticated()
                         .requestMatchers("/api/manufacturers/**").hasRole("ADMIN")
                         .requestMatchers("/api/orders").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtRequestFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil, userService), UsernamePasswordAuthenticationFilter.class); // Add JWT filter before UsernamePasswordAuthenticationFilter
+                .addFilterBefore(new JwtRequestFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtUtil, userService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

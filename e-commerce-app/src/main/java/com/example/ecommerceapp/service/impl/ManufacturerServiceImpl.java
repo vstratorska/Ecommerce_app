@@ -20,7 +20,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public Optional<Manufacturer> findManufacturerById(Long id) {
-      return this.manufacturerRepository.findById(id);
+        return this.manufacturerRepository.findById(id);
     }
 
     @Override

@@ -28,8 +28,18 @@ public class ProductRestController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/category/{category}")
+    List<Product> getProductsByCategory(@PathVariable String category) {
+        return productService.getProductsByCategory(category);
+    }
+
+    @GetMapping("/product/{name}")
+    List<Product> getProductByName(@PathVariable String name) {
+        return productService.getProductsByName(name);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProducts(@PathVariable Long id) {
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
         return productService.getProductById(id)
                 .map(product -> ResponseEntity.ok().body(product))
                 .orElse(ResponseEntity.notFound().build());

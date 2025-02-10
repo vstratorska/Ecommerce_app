@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import { useAuth } from "./AuthContext";
+import {useAuth} from "./AuthContext";
 import {Link, useNavigate} from "react-router-dom";
-import { useError } from "../Errors/errorContext";
+import {useError} from "../Errors/errorContext";
 
 const Login = (props) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const {login} = useAuth();
     const navigate = useNavigate();
-    const { setError } = useError();
+    const {setError} = useError();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,7 +32,7 @@ const Login = (props) => {
 
 
     return (
-        <form className="container" style={{marginTop: "30px"}} onSubmit={handleSubmit}>
+        <form className="container" style={{marginTop: "30px",  marginBottom: "100px"}} onSubmit={handleSubmit}>
             <div style={{fontSize: "30px"}}>Log in</div>
             <div className="mb-3">
                 <input value={username}
@@ -47,8 +47,8 @@ const Login = (props) => {
                        className="form-control" id="exampleInputPassword1"/>
             </div>
             <div className="d-grid gap-2">
-                 <button type="submit" className="btn btn-primary">Sign in</button>
-                 <Link to={"/register"} type="submit" className="btn btn-light">Register here</Link>
+                <button type="submit" className="btn btn-primary">Sign in</button>
+                <Link to={"/register"} type="submit" className="btn btn-light">Register here</Link>
 
             </div>
         </form>

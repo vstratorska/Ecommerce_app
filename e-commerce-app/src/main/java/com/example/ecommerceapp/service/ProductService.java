@@ -10,8 +10,16 @@ import java.util.Optional;
 public interface ProductService {
 
     Optional<Product> getProductById(Long id);
+
     List<Product> getAllProducts();
+
     Optional<Product> save(ProductDto productDto);
+
     Optional<Product> edit(Long id, ProductDto productDto);
+
     void delete(Long id);
+
+    List<Product> getProductsByCategory(String category);
+
+    List<Product> getProductsByName(String name);
 }

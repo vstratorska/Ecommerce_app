@@ -4,28 +4,25 @@ import {Link} from "react-router-dom";
 import {useAuth} from "../../Authentication/AuthContext";
 
 const Manufacturers = (props) => {
-    const { userRoles } = useAuth();
+    const {userRoles} = useAuth();
     return (
 
         <div>
-            <h1>Manufacturers</h1>
-            <table className={"table"}>
-                <thead className={"table-primary"}>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Origin Country</th>
-                </tr>
-                </thead>
+            {!userRoles.includes("ROLE_ADMIN") &&
+                <h1 className="text-center custom-title mb-4">Our Manufacturers</h1>}
+            {userRoles.includes("ROLE_ADMIN") &&
+                <Link className="btn btn-dark add-btn" to={"/manufacturers/add"}>Add Manufacturer</Link>}
+            <table className={"table container mt-3"} style={{marginBottom: "100px"}}>
                 <tbody>
                 {props.manufacturers.map(m => {
-                    return (<ManufacturerTerm term={m} onDelete={props.onDelete} getManufacturer={props.getManufacturer}/>)
+                    return (
+                        <ManufacturerTerm term={m} onDelete={props.onDelete} getManufacturer={props.getManufacturer}/>)
                 })}
 
                 </tbody>
             </table>
-            { userRoles.includes("ROLE_ADMIN") && <Link className="btn btn-dark" to={"/manufacturers/add"}>Add Manufacturer</Link>}
         </div>
+
 
     )
 }

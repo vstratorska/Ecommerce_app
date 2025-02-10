@@ -67,14 +67,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isEnabled() { return isEnabled; }
-
-//    @Override
-//    public String getUsername() { return username; }
-//
-//
-//    @Override
-//    public String getPassword() { return password; }
-
-
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 }

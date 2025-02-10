@@ -13,6 +13,12 @@ const EcomService = {
     fetchProductsForShoppingCart: () => {
         return axios.get("/shopping-cart");
     },
+    fetchProductsByCategory: (category) => {
+        return axios.get(`/products/category/${category}`);
+    },
+    fetchProductByName: (name) => {
+        return axios.get(`/products/product/${name}`);
+    },
     fetchCategories: () => {
         return axios.get("/categories");
     },
@@ -26,19 +32,19 @@ const EcomService = {
         return axios.delete(`/products/delete/${id}`);
     },
     addProduct: (name, price, description, image, quantity, category, manufacturer) => {
-        return  axios.post("/products/add", {
-                "name" : name,
-                "price" : price,
-                "description" : description,
-                "image" : image,
-                "quantity" : quantity,
-                "category" : category,
-                "manufacturerId" : manufacturer,
-            })
+        return axios.post("/products/add", {
+            "name": name,
+            "price": price,
+            "description": description,
+            "image": image,
+            "quantity": quantity,
+            "category": category,
+            "manufacturerId": manufacturer,
+        })
     },
-    editProduct: (id, name, price,description, image, quantity, category, manufacturer) => {
+    editProduct: (id, name, price, description, image, quantity, category, manufacturer) => {
         return axios.put(`/products/edit/${id}`, {
-            "id" : id,
+            "id": id,
             "name": name,
             "price": price,
             "description": description,
@@ -53,14 +59,14 @@ const EcomService = {
     },
     addManufacturer: (name, description, country) => {
         return axios.post("/manufacturers/add", {
-            "manufacturerName" : name,
-            "manufacturerDescription" : description,
-            "manufacturerCountry" : country,
+            "manufacturerName": name,
+            "manufacturerDescription": description,
+            "manufacturerCountry": country,
         })
     },
     editManufacturer: (id, name, description, country) => {
         return axios.put(`/manufacturers/edit/${id}`, {
-            "id" : id,
+            "id": id,
             "manufacturerName": name,
             "manufacturerDescription": description,
             "manufacturerCountry": country,
@@ -87,7 +93,7 @@ const EcomService = {
             "username": username,
             "password": password,
             "repeatPassword": repeatPassword,
-            "name" : name,
+            "name": name,
             "surname": surname
         })
     },

@@ -9,7 +9,9 @@ import java.util.Optional;
 public interface OrderService {
 
     List<Order> findAll();
+
     Optional<Order> order(User user);
+
     List<Order> myOrders(User user);
 
 }

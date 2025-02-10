@@ -8,8 +8,12 @@ import java.util.Optional;
 public interface ManufacturerService {
 
     Optional<Manufacturer> findManufacturerById(Long id);
+
     List<Manufacturer> getAllManufacturers();
+
     Optional<Manufacturer> saveManufacturer(Manufacturer manufacturer);
+
     Optional<Manufacturer> editManufacturer(Long id, Manufacturer manufacturer);
+
     void deleteManufacturer(Long id);
 }

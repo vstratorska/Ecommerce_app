@@ -4,37 +4,25 @@ import {Link} from "react-router-dom";
 import ProductTerm from "../Products/ProductTerm/productTerm";
 import ProductTermForCart from "../Products/ProductTerm/productTermForCart";
 
-const ShoppingCart = (props) =>
-{
+const ShoppingCart = (props) => {
     return (
         <div>
-        <h1>My Shopping Cart</h1>
-        <div>
-            <table className="table">
-                <thead className={"table-primary"}>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Description</th>
-                    <th>Image</th>
-                    <th>Manufacturer</th>
-                    <th>Category</th>
-                </tr>
-                </thead>
-                <tbody>
-                {props.products.map(p => <ProductTermForCart deleteProduct={props.deleteProduct} term={p} getProduct={props.getProduct} />)}
-                </tbody>
-            </table>
-            <h1 style={{marginLeft: "1100px"}}>Total:
-                {props.products.map(p => p.price).reduce((accumulator, currentNumber) => accumulator + currentNumber, 0)}
-            </h1>
-            <div className="d-grid gap-2">
-                <button className="btn btn-primary" onClick={() => {
-                    props.order()
-                }}>Order</button>
-            </div>
+            <h1 className="text-center custom-title mb-4">My Shopping Cart</h1>
+            <div>
+                <div className="product-list row row-cols-1 row-cols-md-3 gap-4">
+                    {props.products.map(p => <ProductTermForCart deleteProduct={props.deleteProduct} term={p}
+                                                                 getProduct={props.getProduct}/>)}
+                </div>
+                <h1 className="total"><span>Total: </span>
+                    {Math.round(props.products.map(p => p.price).reduce((accumulator, currentNumber) => accumulator + currentNumber, 0) * 100) / 100}
+                    <span> EUR</span>
+                </h1>
 
-        </div>
+                <button className="btn btn-success order" onClick={() => {
+                    props.order()
+                }}><i class="bi bi-bag-heart"></i> Make Order
+                </button>
+            </div>
         </div>)
 }
 

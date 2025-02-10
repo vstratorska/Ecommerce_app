@@ -1,13 +1,13 @@
 import React, {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import EcomService from "../../../repository/ecommercAppRepo";
-import { useError } from "../../Errors/errorContext";
+import {useError} from "../../Errors/errorContext";
 
 
 const ProductAdd = (props) => {
 
     const navigate = useNavigate()
-    const { setError } = useError();
+    const {setError} = useError();
     const [product, setProduct] = React.useState({
         name: "",
         price: 0,
@@ -18,13 +18,11 @@ const ProductAdd = (props) => {
         manufacturer: 1
     })
 
-    const handleChange = (e) =>
-    {
-        setProduct( {
+    const handleChange = (e) => {
+        setProduct({
                 ...product,
-                [e.target.name] : e.target.value
+                [e.target.name]: e.target.value
             }
-
         )
     }
 
@@ -44,7 +42,7 @@ const ProductAdd = (props) => {
                 props.loadProducts()
                 setError(null);
                 navigate("/products");
-            }).catch ((error) => {
+            }).catch((error) => {
             if (error.response) {
                 setError(error.response.data.error);
             } else {
@@ -55,53 +53,57 @@ const ProductAdd = (props) => {
 
 
     return (
-        <form onSubmit={formSubmited}>
-            <div className="mb-3">
-                <label className="form-label">Name</label>
-                <input name="name" id="name" type="text" className="form-control" onChange={handleChange}
-                       value={product.name}/>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Price</label>
-                <input name="price" id="price" type="text" className="form-control" onChange={handleChange}
-                       value={product.price}/>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Description</label>
-                <input name="description" id="description" type="text" className="form-control" onChange={handleChange}
-                       value={product.description}/>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Image</label>
-                <input name="image" id="image" type="text" className="form-control" onChange={handleChange}
-                       value={product.image}/>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Quantity</label>
-                <input name="quantity" id="quantity" type="text" className="form-control" onChange={handleChange}
-                       value={product.quantity}/>
-            </div>
+        <div>
+            <h1 className="text-center custom-title mb-4">Add Product</h1>
+            <form onSubmit={formSubmited} className="container mt-5">
+                <div className="mb-3">
+                    <label className="form-label">Name</label>
+                    <input name="name" id="name" type="text" className="form-control" onChange={handleChange}
+                           value={product.name}/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Price</label>
+                    <input name="price" id="price" type="text" className="form-control" onChange={handleChange}
+                           value={product.price}/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <input name="description" id="description" type="text" className="form-control"
+                           onChange={handleChange}
+                           value={product.description}/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Image</label>
+                    <input name="image" id="image" type="text" className="form-control" onChange={handleChange}
+                           value={product.image}/>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Quantity</label>
+                    <input name="quantity" id="quantity" type="text" className="form-control" onChange={handleChange}
+                           value={product.quantity}/>
+                </div>
 
-            <div className="mb-3">
-                <label className="form-label">Category</label>
-                <select name="category" className="form-select" onChange={handleChange}>
-                    <option></option>
-                    {props.categories.map(c => {
-                        return <option value={c}>{c}</option>
-                    })}
-                </select>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Manufacturer</label>
-                <select name="manufacturer"  className="form-select" onChange={handleChange}>
-                    <option></option>
-                    {props.manufacturers.map(c => {
-                        return <option value={c.id}>{c.manufacturerName}</option>
-                    })}
-                </select>
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
-        </form>
+                <div className="mb-3">
+                    <label className="form-label">Category</label>
+                    <select name="category" className="form-select" onChange={handleChange}>
+                        <option></option>
+                        {props.categories.map(c => {
+                            return <option value={c}>{c}</option>
+                        })}
+                    </select>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Manufacturer</label>
+                    <select name="manufacturer" className="form-select" onChange={handleChange}>
+                        <option></option>
+                        {props.manufacturers.map(c => {
+                            return <option value={c.id}>{c.manufacturerName}</option>
+                        })}
+                    </select>
+                </div>
+                <button type="submit" className="btn btn-outline-warning mt-3 custom-submit">Submit</button>
+            </form>
+        </div>
     )
 }
 

@@ -3,6 +3,8 @@ package com.example.ecommerceapp.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class Order {
     @ManyToMany
     private List<Product> products;
 
-    private Double total;
+    private BigDecimal total;
     private LocalDateTime date;
 
     public Order() {
@@ -30,7 +32,7 @@ public class Order {
 
     public Order(User user, Double total, List<Product> products) {
         this.user = user;
-        this.total = total;
+        this.total = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP);;
         this.products = products;
         this.date = LocalDateTime.now();
     }
